@@ -28,7 +28,14 @@
   </head>
   <body>
     <h1>Coveo Atomic Search</h1>
-    <atomic-search-interface id="search">
+    <atomic-search-interface
+        id="search"
+        fields-to-include='["ytlikecount",
+            "ytviewcount",
+            "ytthumbnailurl",
+            "ytviewrating"
+        ]'
+    >
       <atomic-search-layout> 
       <!-- all Atomic components will go in here -->
         <atomic-layout-section section="search">
@@ -36,36 +43,54 @@
         </atomic-layout-section>
 
         <atomic-layout-section section="facets">
-        <atomic-facet-manager> 
-            <atomic-facet
-            field="source"
-            label="Source"
-            ></atomic-facet> 
-            <atomic-facet
-            field="language"
-            label="Language"
-            ></atomic-facet>
+            <atomic-facet-manager> 
+                <atomic-facet
+                    field="source"
+                    label="Source"
+                ></atomic-facet> 
+                <atomic-facet
+                    field="language"
+                    label="Language"
+                ></atomic-facet>
 
-                <atomic-timeframe-facet
-                label="Timeframe"
-                with-date-picker="true"
-                is-collapsed="true"
-                > 
-                <atomic-timeframe unit="hour"></atomic-timeframe> 
-                <atomic-timeframe unit="day"></atomic-timeframe>
-                <atomic-timeframe unit="week"></atomic-timeframe>
-                <atomic-timeframe unit="month"></atomic-timeframe>
-                <atomic-timeframe unit="quarter"></atomic-timeframe>
-                <atomic-timeframe unit="year"></atomic-timeframe>
-                </atomic-timeframe-facet>
+                    <atomic-timeframe-facet
+                    label="Timeframe"
+                    with-date-picker="true"
+                    is-collapsed="true"
+                    > 
+                    <atomic-timeframe unit="hour"></atomic-timeframe> 
+                    <atomic-timeframe unit="day"></atomic-timeframe>
+                    <atomic-timeframe unit="week"></atomic-timeframe>
+                    <atomic-timeframe unit="month"></atomic-timeframe>
+                    <atomic-timeframe unit="quarter"></atomic-timeframe>
+                    <atomic-timeframe unit="year"></atomic-timeframe>
+                    </atomic-timeframe-facet>
 
-        </atomic-facet-manager>
+            </atomic-facet-manager>
         </atomic-layout-section>
 
         <atomic-layout-section section="main">
 
             <atomic-layout-section section="status">
-            <atomic-refine-toggle></atomic-refine-toggle>
+                <atomic-did-you-mean></atomic-did-you-mean>
+            <!-- <atomic-refine-toggle></atomic-refine-toggle> -->
+
+                <atomic-breadbox></atomic-breadbox> 
+                <atomic-query-summary></atomic-query-summary> 
+                <atomic-refine-toggle></atomic-refine-toggle>
+                <atomic-sort-dropdown> 
+                    <atomic-sort-expression
+                        label="Relevance"
+                        expression="relevancy, ytlikecount descending"
+                    > 
+                    </atomic-sort-expression>
+                    <atomic-sort-expression
+                        label="Date"
+                        expression="date descending"
+                    >
+                    </atomic-sort-expression>
+                </atomic-sort-dropdown>
+
             </atomic-layout-section>
 
         <atomic-layout-section section="results">
@@ -84,10 +109,40 @@
                     </atomic-result-section-visual>
 
                     <!-- ** Add the code from the Badge Result Section here ** -->
+                    <atomic-result-section-badges>
+                    <atomic-field-condition if-defined="language"> 
+                        <atomic-result-badge
+                        icon="https://raw.githubusercontent.com/Rush/Font-Awesome-SVG-PNG/master/black/svg/language.svg"
+                        >
+                        <atomic-result-multi-value-text field="language"></atomic-result-multi-value-text>
+                        </atomic-result-badge>
+                    </atomic-field-condition>
+                    <atomic-field-condition must-match-sourcetype="YouTube"> 
+                        <atomic-result-badge
+                        label="YouTube"
+                        ></atomic-result-badge>
+                    </atomic-field-condition>
+                    </atomic-result-section-badges>
 
                     <!-- ** Add the code from the Title Metadata Result Section here ** -->
+                    <atomic-result-section-title-metadata>
+                        <atomic-field-condition if-defined="ytviewrating"> 
+                            <atomic-result-rating field="ytviewrating"></atomic-result-rating> 
+                        </atomic-field-condition>
+                        <atomic-field-condition if-not-defined="ytviewrating"> 
+                            <atomic-result-printable-uri></atomic-result-printable-uri>
+                        </atomic-field-condition>
+                    </atomic-result-section-title-metadata>
 
                     <!-- ** Add the code from the Bottom Metadata Result Section here ** -->
+                    <atomic-result-section-bottom-metadata>
+                        <atomic-result-fields-list> 
+                            <atomic-field-condition if-defined="date">
+                                <span class="field-label">Date Published:</span> 
+                                <atomic-result-date></atomic-result-date> 
+                            </atomic-field-condition>
+                        </atomic-result-fields-list>
+                    </atomic-result-section-bottom-metadata>
 
                     <atomic-result-section-title>
                         <atomic-result-link target="_blank"></atomic-result-link> 
